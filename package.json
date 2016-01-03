@@ -1,0 +1,12 @@
+	
+{
+	"name" : "PM2.5",
+	"dependencies" : {
+		"express" : "*",
+		"mongodb" : "*",
+		"jade" : "*",
+		"body-parser" : "*",
+		"express-session" : "*",
+		"cookie-parser" : "*"
+	}
+}
