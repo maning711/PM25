@@ -50,8 +50,14 @@ app.get('/signup', function (req, res) {
 /**
  * connect to db
  */
-var server = new mongodb.Server('123.0.0.1', 27017);
+var MongoClient = mongodb.MongoClient;
+var DB_CONN_STR = 'mongodb://localhost:27017/test';
 
+MongoClient.connect(DB_CONN_STR, function(err, db) {
+    if (err) throw err;
+    console.log('\033[96m + \033[39m connected to mongodb');
+    app.users = db.collection('maning');
+});
 
 /**
  * listener
