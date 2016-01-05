@@ -12,7 +12,7 @@ app = express();
 /**
  * set the middleware
  */
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 app.use(cookieParser());
 app.use(session({
@@ -36,27 +36,39 @@ app.get('/', function (req, res) {
 /**
  * login route
  */
-app.get('/login', function (req, res) {
-	res.render('login');
+app.get('/login/:signupEmail', function (req, res) {
+	res.render('login', { signupEmail : req.params.signupEmail });
 });
 
 /**
  * signup route
  */
 app.get('/signup', function (req, res) {
-	res.render('signup');
+  res.render('signup');
+});
+
+/**
+ * signup post route
+ */
+app.post('/signup', function (req, res, next) {
+  app.users.insert(req.body.user, {safe:true});
 });
 
 /**
  * connect to db
  */
-var MongoClient = mongodb.MongoClient;
-var DB_CONN_STR = 'mongodb://localhost:27017/test';
-
-MongoClient.connect(DB_CONN_STR, function(err, db) {
-    if (err) throw err;
-    console.log('\033[96m + \033[39m connected to mongodb');
-    app.users = db.collection('maning');
+var server = new mongodb.Server('127.0.0.1', 27017, {auto_reconnect:true});
+new mongodb.Db('test', server, {safe : true}).open(function (err, client) {
+  if (err) throw err;
+  console.log('connected success!');
+  app.users = new mongodb.Collection(client, 'maning', {safe : true});
+  /*app.users.find(function(error,cursor){
+    cursor.each(function(error,doc){
+      if(doc){
+        console.log("First:"+doc.First+" Last:"+doc.Last + " Email:"+doc.Email + " Password:"+doc.password + " PM2.0:"+doc.PM25);
+      }
+    });
+  });*/
 });
 
 /**

@@ -2,14 +2,16 @@ extends layout
 block body
   form(action="/login", method="POST")
     fieldset
+      if (signupEmail)
+        p Congratulations on signing uo! Please login below.
       legend Log in
-      P
+      p
         label Email
-        input(name="user[email]", type="text")
-      P
+        input(name="user[email]", type="text", value=signupEmail)
+      p
         label Password
-        input(name="user[password]", type="text")
-      P
+        input(name="user[password]", type="password")
+      p
         button Submit
-      P
+      p
         a(href="/") Go back

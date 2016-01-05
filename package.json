@@ -1,12 +1,13 @@
 	
 {
-	"name" : "PM2.5_test",
+	"name" : "PM2.5",
 	"dependencies" : {
 		"express" : "*",
-		"mongodb" : "*",
+		"mongodb" : "1.4.6",
 		"jade" : "*",
 		"body-parser" : "*",
 		"express-session" : "*",
-		"cookie-parser" : "*"
+		"cookie-parser" : "*",
+		"bson" : "*"
 	}
 }
