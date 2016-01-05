@@ -1,6 +1,6 @@
 	
 {
-	"name" : "PM2.5",
+	"name" : "PM2.5_maning",
 	"dependencies" : {
 		"express" : "*",
 		"mongodb" : "*",
