@@ -51,24 +51,22 @@ app.get('/signup', function (req, res) {
  * signup post route
  */
 app.post('/signup', function (req, res, next) {
-  app.users.insert(req.body.user, {safe:true});
+  app.users.insertOne(req.body.user, function (err, doc) {
+    if (err) return next(err);
+    res.redirect('/login/' + doc.ops[0].email);
+  })
 });
 
 /**
  * connect to db
  */
-var server = new mongodb.Server('127.0.0.1', 27017, {auto_reconnect:true});
-new mongodb.Db('test', server, {safe : true}).open(function (err, client) {
-  if (err) throw err;
-  console.log('connected success!');
-  app.users = new mongodb.Collection(client, 'maning', {safe : true});
-  /*app.users.find(function(error,cursor){
-    cursor.each(function(error,doc){
-      if(doc){
-        console.log("First:"+doc.First+" Last:"+doc.Last + " Email:"+doc.Email + " Password:"+doc.password + " PM2.0:"+doc.PM25);
-      }
-    });
-  });*/
+var MongoClient = mongodb.MongoClient;
+var DB_CONN_STR = 'mongodb://localhost:27017/test';
+
+MongoClient.connect(DB_CONN_STR, function(err, db) {
+    if (err) throw err;
+    console.log('\033[96m + \033[39m connected to mongodb');
+    app.users = db.collection('maning');
 });
 
 /**
