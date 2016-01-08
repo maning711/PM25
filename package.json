@@ -3,11 +3,12 @@
 	"name" : "PM2.5",
 	"dependencies" : {
 		"express" : "*",
-		"mongodb" : "1.4.6",
+		"mongodb" : "*",
 		"jade" : "*",
 		"body-parser" : "*",
 		"express-session" : "*",
 		"cookie-parser" : "*",
-		"bson" : "*"
+		"bson" : "*",
+		"superagent" : "*"
 	}
 }
