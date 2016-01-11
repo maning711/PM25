@@ -49,20 +49,24 @@ app.use(function (req, res, next) {
 app.set('view engine', 'jade');
 
 /**
- * default route
+ * get the logined user's PM25 data
  */
-app.get('/', function (req, res) {
-
-  // get the logined user's PM25 data
-  var pm25 = '';
-  superagent.post('http://api.lib360.net/open/pm2.5.json?city=天津')
+var pm25 = superagent.post('http://api.lib360.net/open/pm2.5.json?city=天津')
   .set('Accept', 'application/json')
   .end(function (err, res) {
     var json = JSON.parse(res.text);
     if (err) throw err;
-    pm25 = json.pm25;
+    pm25.login_pm25 = json.pm25;
   });
-	res.render('index', { pm25 : pm25});
+
+/**
+ * default route
+ */
+app.get('/', function (req, res) {
+	res.render('index', {
+    login_pm25 : pm25.login_pm25,
+    login_city : req.session.loggedCity
+  });
 });
 
 /**
@@ -88,6 +92,7 @@ app.post('/login', function (req, res) {
       if (err) return next(err);
       if (!doc) return res.send('<p>User not found. Go back and try again.</p>');
       req.session.loggedIn = doc._id.toString();
+      req.session.loggedCity = '天津';
       res.redirect('/');
     });
 });
@@ -114,6 +119,7 @@ app.post('/signup', function (req, res, next) {
  */
 app.get('/logout', function (req, res) {
   req.session.loggedIn = null;
+  req.session.loggedCity = null;
   res.redirect('/');
 });
 

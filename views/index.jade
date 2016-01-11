@@ -1,7 +1,7 @@
 extends layout
 block body
   if (authenticated)
-    p Welcome back, #{me.first + me.last}, today your city's pm2.5 is
+    p Welcome back, #{me.first + me.last}, today your city's pm2.5 is #{login_pm25}
     a(href="/logout") Logout
   else
     p Welcome new vistor!
