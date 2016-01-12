@@ -17,7 +17,7 @@ app = express();
  * set the middleware
  */
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(session({
 	resave: false,
@@ -47,6 +47,34 @@ app.use(function (req, res, next) {
  * set view item
  */
 app.set('view engine', 'jade');
+
+/**
+ * get the logined user's loggedCity
+ */
+app.use(function (req, res, next) {
+  if (req.session.loggedIn) {
+    var ipAddress;
+    var city;
+    var forwardedIpsStr = req.header('x-forwarded-for'); 
+    if (forwardedIpsStr) {
+        var forwardedIps = forwardedIpsStr.split(',');
+        ipAddress = forwardedIps[0];
+    }
+    if (!ipAddress) {
+        ipAddress = req.connection.remoteAddress;
+    }
+    console.log(ipAddress);
+    city = superagent.post('http://ip.taobao.com/service/getIpInfo.php?ip=' + ipAddress)
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        var json = JSON.parse(res.text);
+        console.log(json);
+        if (err) throw err;
+      });
+    res.locals.loggedCity = city;
+  }
+  next();
+});
 
 /**
  * get the logined user's PM25 data
