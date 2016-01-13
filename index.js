@@ -1,5 +1,5 @@
 /**
- * create:maning
+ * created by maning
  */
 var express = require('express')
   , mongodb = require('mongodb')
@@ -12,6 +12,11 @@ var express = require('express')
  * create the app
  */
 app = express();
+
+/**
+ * set view item
+ */
+app.set('view engine', 'jade');
 
 /**
  * set the middleware
@@ -44,57 +49,41 @@ app.use(function (req, res, next) {
 });
 
 /**
- * set view item
+ * get the logined user's IP and city, PM25 data
  */
-app.set('view engine', 'jade');
+var loggedIP;
+var loggedPm25;
+var loggedCity = superagent.post('http://pv.sohu.com/cityjson?ie=utf-8')
+  .set('Accept', 'application/json')
+  .end(function (err, res) {
+    if (err) throw err;
 
-/**
- * get the logined user's loggedCity
- */
-app.use(function (req, res, next) {
-  if (req.session.loggedIn) {
-    var ipAddress;
-    var city;
-    var forwardedIpsStr = req.header('x-forwarded-for'); 
-    if (forwardedIpsStr) {
-        var forwardedIps = forwardedIpsStr.split(',');
-        ipAddress = forwardedIps[0];
-    }
-    if (!ipAddress) {
-        ipAddress = req.connection.remoteAddress;
-    }
-    console.log(ipAddress);
-    city = superagent.post('http://ip.taobao.com/service/getIpInfo.php?ip=' + ipAddress)
+    // get the IP and City
+    var json;
+    var result = res.text;
+    result = result.split('=')[1].trim();
+    result = result.replace(';','');
+    json = JSON.parse(result);
+    loggedIP = json.cip.toString();
+    loggedCity = json.cname.replace('市','');
+
+    // get pm2.5 data of the city
+    superagent.post('http://api.lib360.net/open/pm2.5.json?city=' + loggedCity)
       .set('Accept', 'application/json')
       .end(function (err, res) {
         var json = JSON.parse(res.text);
-        console.log(json);
         if (err) throw err;
+        loggedPm25 = json.pm25;
       });
-    res.locals.loggedCity = city;
-  }
-  next();
-});
-
-/**
- * get the logined user's PM25 data
- */
-var pm25 = superagent.post('http://api.lib360.net/open/pm2.5.json?city=天津')
-  .set('Accept', 'application/json')
-  .end(function (err, res) {
-    var json = JSON.parse(res.text);
-    if (err) throw err;
-    pm25.login_pm25 = json.pm25;
   });
 
 /**
  * default route
  */
 app.get('/', function (req, res) {
-	res.render('index', {
-    login_pm25 : pm25.login_pm25,
-    login_city : req.session.loggedCity
-  });
+  res.locals.loggedCity = loggedCity;
+  res.locals.loggedPm25 = loggedPm25
+	res.render('index');
 });
 
 /**
@@ -120,7 +109,6 @@ app.post('/login', function (req, res) {
       if (err) return next(err);
       if (!doc) return res.send('<p>User not found. Go back and try again.</p>');
       req.session.loggedIn = doc._id.toString();
-      req.session.loggedCity = '天津';
       res.redirect('/');
     });
 });
@@ -147,7 +135,6 @@ app.post('/signup', function (req, res, next) {
  */
 app.get('/logout', function (req, res) {
   req.session.loggedIn = null;
-  req.session.loggedCity = null;
   res.redirect('/');
 });
 

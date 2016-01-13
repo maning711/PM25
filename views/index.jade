@@ -1,8 +1,8 @@
 extends layout
 block body
   if (authenticated)
-    p Here is #{login_city}
-    p Welcome back, #{me.first + me.last}, today your city's pm2.5 is #{login_pm25}
+    p Here is #{loggedCity}
+    p Welcome back, #{me.first + me.last}, today your city's pm2.5 is #{loggedPm25}
     a(href="/logout") Logout
   else
     p Welcome new vistor!
