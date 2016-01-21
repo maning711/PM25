@@ -65,7 +65,8 @@ var loggedCity = superagent.post('http://pv.sohu.com/cityjson?ie=utf-8')
     result = result.replace(';','');
     json = JSON.parse(result);
     loggedIP = json.cip.toString();
-    loggedCity = json.cname.replace('市','');
+    loggedCity = json.cname.replace('市辖区','');
+    loggedCity = loggedCity.replace('市','');
 
     // get pm2.5 data of the city
     superagent.post('http://api.lib360.net/open/pm2.5.json?city=' + loggedCity)
