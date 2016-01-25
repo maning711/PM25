@@ -3,6 +3,21 @@ block body
   if (authenticated)
     p Here is #{loggedCity}
     p Welcome back, #{me.first + me.last}, today your city's pm2.5 is #{loggedPm25}
+    table(style={width:'100%'})
+      tr
+        td(style={width:'10%'})
+          div#product_img(style={width:'100%'})
+            img(src='#{productList[0].product_img_src}')
+        td(style={width:'85%'})
+          div#product_img
+            img(src='#{productList[1].product_img_src}')
+      tr
+        td
+          span#product_title(style={width:'100%'})
+            #{productList[0].product_title}
+        td
+          span#product_title(style={width:'100%'})
+            #{productList[1].product_title}
     a(href="/logout") Logout
   else
     p Welcome new vistor!
