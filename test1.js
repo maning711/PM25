@@ -1,6 +1,6 @@
-﻿var req = require('request');
-var cheerio = require('cheerio');
-var iconv = require('iconv-lite')
+﻿var req = require('request')
+  , cheerio = require('cheerio')
+  , iconv = require('iconv-lite')
   , bodyParser = require('body-parser')
   , cookieParser = require('cookie-parser')
   , session = require('express-session')
@@ -50,12 +50,13 @@ req({
     encoding : null,
     headrs : {
         'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'accept-language' : 'ja,en-US;q=0.8,en;q=0.6'
+        'accept-language' : 'ja,en-US;q=0.8,en;q=0.6',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36'
     }
 }, function (error, response, body) {
     if (!error) {
 
-        var $ = cheerio.load(response.body.toString());
+        var $ = cheerio.load(iconv.decode(body, 'gbk'), {decodeEntities: false});
         $('div.product-iWrap').each(function() {
             var me = $(this);
             var temp;
@@ -83,13 +84,11 @@ req({
             product_volume = me.find('p.productStatus em').text();
             product_evaluate_src = me.find('p.productStatus a').attr('href');
             product_evaluate = me.find('p.productStatus a').text();
-            
+
             var prdt = new product(product_src, product_img_src, product_price,
-                iconv.encode(product_title, 'UTF-8'), product_shop_src,
-                iconv.encode(product_shop_name, 'UTF-8'), product_volume,
-                product_evaluate_src, iconv.encode(product_evaluate, 'UTF-8'));
+                product_title, product_shop_src, product_shop_name, product_volume,
+                product_evaluate_src, product_shop_name);
             productList.push(prdt);
-            console.log(me.find('p.productTitle').html());
         });
     }
 });
