@@ -8,11 +8,14 @@ block body
           div.product
             div.product_selected
               div.productImg_selected
-                a(href='#{productList[product].product_src}')
+                a.productImg_link(href='#{productList[product].product_src}')
                   img(src='#{productList[product].product_img_src}')
               p.productPrice
                 em(title='#{productList[product].product_price}')
-              #{productList[product].product_title}
+                  ¥ #{productList[product].product_price}
+              p.productTitle
+                a.productTitle_link(href='#{productList[product].product_src}')
+                  #{productList[product].product_title}
       - }
     a(href="/logout") Logout
   else
