@@ -1,22 +1,25 @@
-extends layout
+extends public/layout
 block body
   if (authenticated)
     p Here is #{loggedCity}
     p Welcome back, #{me.first + me.last}, today your city's pm2.5 is #{loggedPm25}
-    div.product_main
-      - for (product in productList) {
-          div.product
-            div.product_selected
-              div.productImg_selected
-                a.productImg_link(href='#{productList[product].product_src}')
-                  img(src='#{productList[product].product_img_src}')
-              p.productPrice
-                em(title='#{productList[product].product_price}')
-                  ¥ #{productList[product].product_price}
-              p.productTitle
-                a.productTitle_link(href='#{productList[product].product_src}')
-                  #{productList[product].product_title}
-      - }
+    div#content
+      div.content_main
+        div.product_main
+          - for (product in productList) {
+              div.product
+                div.product_selected
+                  div.productImg_selected
+                    a.productImg_link(href='#{productList[product].product_src}',target='_blank')
+                      img(src='#{productList[product].product_img_src}')
+                  p.productPrice
+                    em(title='#{productList[product].product_price}')
+                      span ¥
+                        #{productList[product].product_price}
+                  p.productTitle
+                    a.productTitle_link(href='#{productList[product].product_src}',target='_blank')
+                      #{productList[product].product_title}
+          - }
     a(href="/logout") Logout
   else
     p Welcome new vistor!

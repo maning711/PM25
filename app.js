@@ -5,8 +5,11 @@ var express = require('express')
   , mongodb = require('mongodb')
   , bodyParser = require('body-parser')
   , cookieParser = require('cookie-parser')
-  , session = require('express-session')
-  , superagent = require('superagent');
+  , session = require('express-session');
+  // get the IP and PM2.5
+  logInfo = require('./public/modules/module_getIpAndPm25');
+  // get the products from Tmall
+  products = require('./public/modules/module_getIpAndPm25');
 
 /**
  * create the app
@@ -19,15 +22,21 @@ app = express();
 app.set('view engine', 'jade');
 
 /**
+ * set static path
+ */
+app.use(express.static('views'));
+app.use(express.static('public'));
+
+/**
  * set the middleware
  */
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(session({
-	resave: false,
-  saveUninitialized: true,
-	secret : 'my secret'
+    resave: false,
+    saveUninitialized: true,
+    secret : 'my secret'
 }));
 
 /**
@@ -49,42 +58,13 @@ app.use(function (req, res, next) {
 });
 
 /**
- * get the logined user's IP and city, PM25 data
- */
-var loggedIP;
-var loggedPm25;
-var loggedCity = superagent.post('http://pv.sohu.com/cityjson?ie=utf-8')
-  .set('Accept', 'application/json')
-  .end(function (err, res) {
-    if (err) throw err;
-
-    // get the IP and City
-    var json;
-    var result = res.text;
-    result = result.split('=')[1].trim();
-    result = result.replace(';','');
-    json = JSON.parse(result);
-    loggedIP = json.cip.toString();
-    loggedCity = json.cname.replace('市辖区','');
-    loggedCity = loggedCity.replace('市','');
-
-    // get pm2.5 data of the city
-    superagent.post('http://api.lib360.net/open/pm2.5.json?city=' + loggedCity)
-      .set('Accept', 'application/json')
-      .end(function (err, res) {
-        var json = JSON.parse(res.text);
-        if (err) throw err;
-        loggedPm25 = json.pm25;
-      });
-  });
-
-/**
  * default route
  */
 app.get('/', function (req, res) {
-  res.locals.loggedCity = loggedCity;
-  res.locals.loggedPm25 = loggedPm25
-	res.render('index');
+  res.locals.loggedCity = logInfo.loggedCity;
+  res.locals.loggedPm25 = logInfo.loggedPm25;
+  res.locals.productList = products.productList;
+  res.render('index');
 });
 
 /**
@@ -98,7 +78,7 @@ app.get('/', function (req, res) {
  * logined route
  */
 app.get('/login/:signupEmail', function (req, res) {
-	res.render('login', { signupEmail : req.params.signupEmail });
+    res.render('login', { signupEmail : req.params.signupEmail });
 });
 
 /**
