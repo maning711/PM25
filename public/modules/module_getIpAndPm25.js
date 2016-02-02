@@ -3,10 +3,10 @@
  * module : get the IP and PM2.5
  */ 
 var superagent = require('superagent');
-var logInfo;
+var logInfo = new Object();
 
-function getIpAndPm25 (logInfo) {
-  return superagent.post('http://pv.sohu.com/cityjson?ie=utf-8')
+function getIpAndPm25 () {
+  superagent.post('http://pv.sohu.com/cityjson?ie=utf-8')
   .set('Accept', 'application/json')
   .end(function (err, res) {
     if (err) throw err;
@@ -30,6 +30,7 @@ function getIpAndPm25 (logInfo) {
         logInfo.loggedPm25 = json.pm25;
       });
   });
+  return logInfo;
 }
 
 exports.getIpAndPm25 = getIpAndPm25;

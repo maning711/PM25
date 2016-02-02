@@ -7,9 +7,13 @@ var express = require('express')
   , cookieParser = require('cookie-parser')
   , session = require('express-session');
   // get the IP and PM2.5
-  logInfo = require('./public/modules/module_getIpAndPm25');
+  
+  var logInfos = require('./public/modules/module_getIpAndPm25');
+  var logInfo = logInfos.getIpAndPm25();
+
   // get the products from Tmall
-  products = require('./public/modules/module_getIpAndPm25');
+  var products = require('./public/modules/module_getProudctTmall');
+  var productList = products.getProduct();
 
 /**
  * create the app
@@ -63,7 +67,7 @@ app.use(function (req, res, next) {
 app.get('/', function (req, res) {
   res.locals.loggedCity = logInfo.loggedCity;
   res.locals.loggedPm25 = logInfo.loggedPm25;
-  res.locals.productList = products.productList;
+  res.locals.productList = productList;
   res.render('index');
 });
 

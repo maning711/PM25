@@ -1,17 +1,19 @@
-	
+    
 {
-	"name" : "PM2.5",
-	"dependencies" : {
-		"express" : "*",
-		"mongodb" : "*",
-		"jade" : "*",
-		"body-parser" : "*",
-		"express-session" : "*",
-		"cookie-parser" : "*",
-		"bson" : "*",
-		"superagent" : "*",
-		"url" : "*",
-		"cheerio" : "*",
-		"eventproxy" : "*"
-	}
+    "name" : "PM2.5",
+    "dependencies" : {
+        "express" : "*",
+        "mongodb" : "*",
+        "jade" : "*",
+        "body-parser" : "*",
+        "express-session" : "*",
+        "cookie-parser" : "*",
+        "bson" : "*",
+        "superagent" : "*",
+        "url" : "*",
+        "request" : "*",
+        "cheerio" : "*",
+        "eventproxy" : "*",
+        "iconv-lite" : "*"
+    }
 }
